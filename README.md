@@ -7,9 +7,9 @@ npx create-react-app client --template @chakra-ui/typescript
 ```
 
 ## screens
-- [] home page
-- [] selectCategories page
-- [] game board
+- [x] home page
+- [x] selectCategories page
+- [x] game board
 - [] question page overlay
 - [] question response overlay
 - [] options menu overlay

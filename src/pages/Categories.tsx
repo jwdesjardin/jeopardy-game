@@ -7,10 +7,9 @@ import {
   Heading,
   Button,
   Container,
-  Center
 } from "@chakra-ui/react"
 
-
+import { Link as RouterLink} from 'react-router-dom'
 
 export const Categories = () => (
   
@@ -67,7 +66,9 @@ export const Categories = () => (
       </Grid>
       <VStack spacing={2}>
         <Button p={6} w='60' bg='green.600'>Randomize Categories</Button>
-        <Button p={6} w='60' bg='yellow.300'>Start Game</Button>
+        <RouterLink to='/game'>
+          <Button p={6} w='60' bg='yellow.300'>Start Game</Button>
+        </RouterLink>
       </VStack>
       </VStack>
     </Container>
