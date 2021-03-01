@@ -1,38 +1,32 @@
 import * as React from "react"
 import {
-  ChakraProvider,
   Box,
-  Text,
-  Link,
-  VStack,
-  Code,
-  Grid,
+  ChakraProvider,
   theme,
 } from "@chakra-ui/react"
-import { ColorModeSwitcher } from "./ColorModeSwitcher"
-import { Logo } from "./Logo"
+import { SettingsIcon } from '@chakra-ui/icons'
+
+import {BrowserRouter as Router, Route, Switch, Redirect} from 'react-router-dom'
+import {Homepage} from './pages/Homepage'
+import {Categories} from './pages/Categories'
+import {GameBoard} from './pages/GameBoard'
+import { ColorModeSwitcher } from "./components/ColorModeSwitcher"
 
 export const App = () => (
   <ChakraProvider theme={theme}>
-    <Box textAlign="center" fontSize="xl">
-      <Grid minH="100vh" p={3}>
-        <ColorModeSwitcher justifySelf="flex-end" />
-        <VStack spacing={8}>
-          <Logo h="40vmin" pointerEvents="none" />
-          <Text>
-            Edit <Code fontSize="xl">src/App.tsx</Code> and save to reload.
-          </Text>
-          <Link
-            color="teal.500"
-            href="https://chakra-ui.com"
-            fontSize="2xl"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn Chakra
-          </Link>
-        </VStack>
-      </Grid>
-    </Box>
+    <Router>
+      <Box p='2' d='flex' alignItems='center' justifyContent='space-between'>
+        <ColorModeSwitcher  />
+        <SettingsIcon mx='2'/>
+
+
+      </Box>
+      <Switch>
+        <Route exact path='/' render={() => <Redirect to='/home'/>} />
+        <Route path='/home' component={Homepage} />
+        <Route path='/categories' component={Categories} />
+        <Route path='/game' component={GameBoard} />
+      </Switch>
+    </Router>
   </ChakraProvider>
 )
