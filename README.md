@@ -1,59 +1,48 @@
-This project was bootstrapped with
-[Create React App](https://github.com/facebook/create-react-app).
+# Jeopardy Game 
 
-## Available Scripts
+this project was bootstrapped using: 
 
-In the project directory, you can run:
+```
+npx create-react-app client --template @chakra-ui/typescript
+```
 
-### `yarn start`
+## screens
+  [] home page
+  [] selectCategories page
+  [] game board
+  [] question page overlay
+  [] question response overlay
+  [] options menu overlay
+  [] game summary
 
-Runs the app in the development mode.<br /> Open
-[http://localhost:3000](http://localhost:3000) to view it in the browser.
+## features
+  [] build random categories and start game functionality
+  [] selecting question
+  [] answering question
+    [] timing a question
+  [] switching turns
+    [] random question selection
+    [] random answering
+  [] persisting answered questions to state
+  [] determing a win
+  [] quiting a game early
+  [] showing summary
+  [] restarting game
+  [] resume a game on browser close
 
-The page will reload if you make edits.<br /> You will also see any lint errors
-in the console.
+## state
+  categories: [
+    {}
+  ],
+  clues: [
+    {}
+  ],
+  answers: [
+    {}
+  ]
 
-### `yarn test`
+  how state will be used in the app: 
+  only persist categories and answers to localstorage. then use categories to find all clues. use clues to build the game board and store each answer in the answer array. use the answer array to tally the scores and the game summary. use the answer array to determine when all questions have been answered. 
 
-Launches the test runner in the interactive watch mode.<br /> See the section
-about
-[running tests](https://facebook.github.io/create-react-app/docs/running-tests)
-for more information.
-
-### `yarn build`
-
-Builds the app for production to the `build` folder.<br /> It correctly bundles
-React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br /> Your app is
-ready to be deployed!
-
-See the section about
-[deployment](https://facebook.github.io/create-react-app/docs/deployment) for
-more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can
-`eject` at any time. This command will remove the single build dependency from
-your project.
-
-Instead, it will copy all the configuration files and the transitive
-dependencies (webpack, Babel, ESLint, etc) right into your project so you have
-full control over them. All of the commands except `eject` will still work, but
-they will point to the copied scripts so you can tweak them. At this point
-you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for
-small and middle deployments, and you shouldn’t feel obligated to use this
-feature. However we understand that this tool wouldn’t be useful if you couldn’t
-customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the
-[Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+  component level state in the gameboard component 
+  persist categories and answers to localstorage
