@@ -10,14 +10,14 @@ npx create-react-app client --template @chakra-ui/typescript
 - [x] home page
 - [x] selectCategories page
 - [x] game board
-- [] question page overlay
+- [x] question page overlay
 - [] question response overlay
 - [] options menu overlay
 - [] game summary
 
 ## features
-- [] build random categories and start game functionality
-- [] selecting question
+- [x] build random categories and start game functionality
+- [x] selecting question
 - [] answering question
   - [] timing a question
 - [] switching turns
@@ -47,3 +47,4 @@ npx create-react-app client --template @chakra-ui/typescript
 
   - component level state in the gameboard component 
   - persist categories and answers to localstorage
+

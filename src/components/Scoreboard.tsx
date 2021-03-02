@@ -16,7 +16,7 @@ export const Scoreboard = () => (
         <Box p={2} bg='green.300' borderRadius='lg' w='60'>
           {/* nameplate */}
           <Box d='flex' justifyContent='space-between' alignItems='center'>
-            <Avatar name="Dan Abrahmov" src="https://bit.ly/dan-abramov" />
+            <Avatar size='lg' name="Dan Abrahmov" src="https://bit.ly/dan-abramov" />
             <Box d='flex' alignItems='flex-start' justifyContent='center' flexDirection='column'>
               <Text fontSize={20} fontWeight='semibold'>
                 Player 1
@@ -37,7 +37,7 @@ export const Scoreboard = () => (
         <Box p={2} bg='gray.400' borderRadius='lg' w='60'>
           {/* nameplate */}
           <Box d='flex' flexDirection='row-reverse' justifyContent='space-between' alignItems='center'>
-            <Avatar name="Kent Dodds" src="https://bit.ly/kent-c-dodds" />
+            <Avatar  size='lg' name="Kent Dodds" src="https://bit.ly/kent-c-dodds" />
             <Box d='flex' alignItems='flex-start' justifyContent='center' flexDirection='column'>
             <Text fontSize={20} fontWeight='semibold'>
                 Player 2
