@@ -9,7 +9,7 @@ import { SettingsIcon } from '@chakra-ui/icons'
 import {BrowserRouter as Router, Route, Switch, Redirect} from 'react-router-dom'
 import {Homepage} from './pages/Homepage'
 import {Categories} from './pages/Categories'
-import {Game} from './pages/Game'
+import {GamePage} from './pages/GamePage'
 import { ColorModeSwitcher } from "./components/ColorModeSwitcher"
 
 export const App = () => (
@@ -25,7 +25,7 @@ export const App = () => (
         <Route exact path='/' render={() => <Redirect to='/home'/>} />
         <Route path='/home' component={Homepage} />
         <Route path='/categories' component={Categories} />
-        <Route path='/game' component={Game} />
+        <Route path='/game' component={GamePage} />
       </Switch>
     </Router>
   </ChakraProvider>

@@ -4,6 +4,8 @@ export interface Answer {
   response: string,
   correct: boolean
   value: number
+  categoryIndex: number
+  questionIndex: number
 }
 
 // data coming in from api
@@ -12,15 +14,21 @@ export interface Clue {
   answer: string,
   question: string,
   value: number, 
-  airdate: Date,
+  airdate: srting,
   category_id: number,
   game_id: number | null,
   invalid_count: number | null
 }
+
 
 export interface Category {
   id: number,
   title: string,
   clues_count: number | null
   clues: Clue[]
+}
+
+export interface Game {
+  categories: Category[]
+  answers: Answer[]
 }

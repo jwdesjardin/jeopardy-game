@@ -10,30 +10,39 @@ import {
 } from "@chakra-ui/react"
 
 import { Link as RouterLink} from 'react-router-dom'
+import { Category, Game } from "../types"
+import { waitFor } from "@testing-library/react"
 
 export const Categories = () => {
 
-  interface Category {
-    id: number,
-    title: string,
-    clues_count: number | null
-  }
-
   const [categories, setCategories] = React.useState<Category[]>([])
+  const [game, setGame ] = React.useState<Game | undefined>()
 
   React.useEffect(() => {
     fetchCategories() 
   }, [])
 
   const fetchCategories = async () => {
+    // get a random number from 0-9999
     const randomNumber = Math.floor(Math.random() * 10000)
     console.log(randomNumber)
+    // fetch a list of categories and set to state
     const response = await fetch(`https://jservice.io/api/categories?count=6&offset=${randomNumber}`)
-    const data = await response.json()
-    console.log(data)
+    const data: Category[] = await response.json()
+    console.log('received categories', data)
     setCategories(data)
-    localStorage.setItem('categories', JSON.stringify(data))
+    setGame({
+      categories: data,
+      answers: []
+    })
   }
+
+  // set to local storage on button click
+  const startGameHandler = async () => {
+    localStorage.setItem('jeopardyGame', JSON.stringify(game))
+  }
+
+
 
   return (
     <Container>
@@ -59,7 +68,7 @@ export const Categories = () => {
       <VStack spacing={2}>
         <Button p={6} w='60' bg='green.600' onClick={fetchCategories}>Randomize Categories</Button>
         <RouterLink to='/game'>
-          <Button p={6} w='60' bg='yellow.300'>Start Game</Button>
+          <Button p={6} w='60' bg='yellow.300' onClick={startGameHandler}>Start Game</Button>
         </RouterLink>
       </VStack>
       </VStack>

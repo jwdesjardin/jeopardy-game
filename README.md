@@ -18,17 +18,19 @@ npx create-react-app client --template @chakra-ui/typescript
 ## features
 - [x] build random categories and start game functionality
 - [x] selecting question
-- [] answering question
+- [x] answering question
   - [] timing a question
+  - [x] persisting answered questions to state
+  - [] determing a valid response 
+- [] displaying score
 - [] switching turns
   - [] random question selection
   - [] random answering
-- [] persisting answered questions to state
-- [] determing a win
+- [] determing a win(all questions answered)
 - [] quiting a game early
 - [] showing summary
-- [] restarting game
-- [] resume a game on browser close
+- [] restarting game (play again)
+- [x] resume a game on browser close
 
 ## state
 ```js
