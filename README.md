@@ -24,13 +24,13 @@ npx create-react-app client --template @chakra-ui/typescript
   - [] determing a valid response 
 - [x] displaying score  
 - [x] switching turns
-  - [] random question selection
+  - [x] random question selection
   - [x] random answering
 - [] recalculate score with 2 players
 - [] determing a win(all questions answered)
-- [] quiting a game early
 - [] showing summary
 - [] restarting game (play again)
+- [] quiting a game early
 - [x] resume a game on browser close
 
 ## state

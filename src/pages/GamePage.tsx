@@ -34,14 +34,12 @@ export const GamePage = () => {
   const [currentClue, setCurrentClue] = React.useState<GameClue | undefined>()
 
   const [response, setResponse] = React.useState('')
-  const [cpuResponse, setCpuResponse] = React.useState('')
   const [playersTurn, setPlayersTurn ] = React.useState(true)
-  const [ responseDisabled, setResponseDisabled ] = React.useState(true)
-  const [ responseTimeRemaining, setResponseTimeRemaining ] = React.useState(15)
-  const [ questionTimeRemaining, setQuestionTimeRemaining ] = React.useState(25)
+  const [questionTimeRemaining, setQuestionTimeRemaining] = React.useState(25)
+  const [clockInterval, setClockInterval] = React.useState<NodeJS.Timeout | undefined>()
+  const [clockTimeout, setClockTimeout] = React.useState<NodeJS.Timeout | undefined>()
+
   const [ responseDisplayToggle, setResponseDisplayToggle]  = React.useState(false)
-  const [ clockInterval, setClockInterval] = React.useState<NodeJS.Timeout | undefined>()
-  const [ clockTimeout, setClockTimeout] = React.useState<NodeJS.Timeout | undefined>()
   const [ secondAttempt, setSecondAttempt] = React.useState(false)
   
 
@@ -51,7 +49,7 @@ export const GamePage = () => {
 
 
 
-  // take categories from local storage and set clues to state
+  
   React.useEffect(() => {
 
     // get game and clues
@@ -64,10 +62,19 @@ export const GamePage = () => {
       else console.log('error getting clues and game')
     }
 
-    
+    console.log('players turn', playersTurn)
+
+    if (!playersTurn && game){
+      console.log('choosing question')
+      setTimeout(() => {
+        cpuPickRandomQuestion(game)
+      }, 4000)
+    }
 
     
-  }, [ ])
+
+  // only rerun this when an answer is added to the game
+  }, [ game ])
 
 
   
@@ -158,6 +165,56 @@ export const GamePage = () => {
     
   }
 
+  const cpuPickRandomQuestion = (game: Game) => {
+    
+      // fill array asked question with index of all asked questions
+      const answers = game.answers
+      const askedQuestions: number[] = []
+      for (let answer of answers){
+        let nodeIndex = answer.questionIndex * 6
+        nodeIndex = nodeIndex + answer.categoryIndex + 1
+        askedQuestions.push(nodeIndex)
+      }
+      console.log('asked questions', askedQuestions)
+
+      // filter available questions
+      const range = []
+      for (let i = 1; i <= 30; i++){
+        range.push(i)
+      }
+      const availableQuestions = range.filter(num => !askedQuestions.includes(num))
+      console.log('available questions', availableQuestions)
+      // get a random int from 0 to array.length - 1
+      const randomInt = Math.floor(Math.random() * availableQuestions.length)
+      const randomIndex = availableQuestions[randomInt]
+      console.log('random index', randomIndex)
+      // get coords from index
+      let category: number
+      let question: number
+      if (randomIndex % 6 === 0){
+        category = 5 
+        question = Math.floor(randomIndex / 6) - 1
+      } else {
+        category = (randomIndex % 6) - 1
+        question = Math.floor(randomIndex / 6)
+      }
+    
+      const foundClue = clues[category].clues[question]
+      
+      const foundCurrentClue = {
+        clue: foundClue,
+        interval: undefined,
+        location: {
+          category, 
+          question
+        }
+      }
+
+      console.log('cpu picked question', foundCurrentClue) 
+      setCurrentClue(foundCurrentClue)
+      displayQuestion(foundCurrentClue, 25)
+  }
+
   
 
 
@@ -182,6 +239,8 @@ export const GamePage = () => {
     const duration = seconds * 1000
     const timeout = setTimeout(() => {
       clearInterval(interval)
+      // setClockInterval(undefined)
+      // setClockTimeout(undefined)
       handleResponse(game, gameClue, response, 'none')
     }, duration)
     setClockTimeout(timeout)
@@ -283,6 +342,7 @@ export const GamePage = () => {
     // console.log('cleared interval', current.interval)
     
 
+    // this will be used on user input
     if (clockInterval){
       clearInterval(clockInterval)
       setClockInterval(undefined)
@@ -336,11 +396,12 @@ export const GamePage = () => {
               questionIndex: current.location.question, 
               answered_by: user
             }
+            setPlayersTurn(!playersTurn)
             addAnswerToGame(game, current, answer)
             // close modal, clear response, change turns
             onClose()
             setResponse('')
-            setPlayersTurn(!playersTurn)
+            
   
           }
           
@@ -355,7 +416,7 @@ export const GamePage = () => {
   const isResponseCorrect = (categoryIndex: number, questionIndex: number, response: string ): boolean => {
     const clue = clues[categoryIndex].clues[questionIndex]
     if (response === '') return false
-    if ( clue.answer.toLowerCase().includes(response)){
+    if ( clue.answer.toLowerCase().includes(response.toLowerCase())){
       return true
     }
       return false
@@ -400,7 +461,7 @@ export const GamePage = () => {
 
         {/* scoreboard */}
         { game &&
-          <Scoreboard answers={game.answers} />
+          <Scoreboard playersTurn={playersTurn} answers={game.answers} />
         }
       </VStack>
 

@@ -11,13 +11,13 @@ import { Answer } from "../types"
 
 interface ScoreboardProps {
   answers: Answer[]
+  playersTurn: boolean
 }
 
-export const Scoreboard: React.FC<ScoreboardProps> = ( { answers } ) => {
+export const Scoreboard: React.FC<ScoreboardProps> = ( { answers, playersTurn } ) => {
 
   const [playerScore, setPlayerScore] = React.useState(0)
   const [computerScore, setComputerScore] = React.useState(0)
-  const [playersTurn, setPlayersTurn] = React.useState(true)
   const [winning, setWinning] = React.useState(true)
 
   React.useEffect(() => {
@@ -55,7 +55,8 @@ export const Scoreboard: React.FC<ScoreboardProps> = ( { answers } ) => {
             <Text fontSize={20} fontWeight='semibold'>
               Player
             </Text>
-            { playersTurn && <Badge >It's Your Turn</Badge> }
+            {playersTurn ? <Badge colorScheme='green'>It's Your Turn</Badge> : <Badge>Not Your Turn</Badge> }
+            
           </Box>
         </Box>
         {/* cash score */}
