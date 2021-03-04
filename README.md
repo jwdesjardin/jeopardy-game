@@ -21,7 +21,7 @@ npx create-react-app client --template @chakra-ui/typescript
 - [x] answering question
   - [x] timing a question
   - [x] persisting answered questions to state
-  - [] determing a valid response 
+  - [x] determing a valid response 
 - [x] displaying score  
 - [x] switching turns
   - [x] random question selection

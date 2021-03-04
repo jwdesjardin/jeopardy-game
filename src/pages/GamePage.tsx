@@ -411,12 +411,44 @@ export const GamePage = () => {
   }
     
   
+  const stripAnswer = (answer: string) => {
+    
+    let newString = answer
 
+    // dont require tags 
+    newString = newString.replace(/^<[a-z]+>/, '')
+    newString = newString.replace(/<\/[a-z]+>$/, '')
+    //dont require 'a ' or 'an ' at the beginning of response
+    newString = newString.replace(/^an?\s/, '')
+    
+
+    console.log('answer', answer)
+    console.log('new string', newString)
+        
+    return newString
+  }
   
   const isResponseCorrect = (categoryIndex: number, questionIndex: number, response: string ): boolean => {
-    const clue = clues[categoryIndex].clues[questionIndex]
     if (response === '') return false
-    if ( clue.answer.toLowerCase().includes(response.toLowerCase())){
+    
+    // get clue
+    const clue = clues[categoryIndex].clues[questionIndex]
+
+    // if clue has multiple answers
+    if (clue.answer.search(/\)$/) !== - 1){
+      const answerString = clue.answer.replace(/\s\(([\w\s]+)\saccepted\)$/, ':$1')
+      const answerArray = answerString.split(':')
+
+      for (let answer of answerArray){
+        if ( response.toLowerCase().includes(stripAnswer(answer.toLowerCase()))){
+          return true
+        }
+      }
+      return false
+    }
+    
+    // if clue has only one answer
+    if ( response.toLowerCase().includes(stripAnswer(clue.answer.toLowerCase()))){
       return true
     }
       return false
