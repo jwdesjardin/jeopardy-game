@@ -130,6 +130,7 @@ export const GamePage = () => {
   const clickQuestionHandler = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     // read event and find coordinates of clue
     const element = event.currentTarget as HTMLInputElement
+    if (element.getAttribute('disabled') === 'true') return 
     if (element.value){
       // get numbers from button element value
       const coords = element.value.split(':')
@@ -181,9 +182,14 @@ export const GamePage = () => {
     const duration = seconds * 1000
     const timeout = setTimeout(() => {
       clearInterval(interval)
-      handleResponse(game, gameClue, response)
+      handleResponse(game, gameClue, response, 'none')
     }, duration)
     setClockTimeout(timeout)
+
+    if (!playersTurn){
+      submitRandomCpuResponse(game, gameClue, interval, timeout)
+    }
+    
 
   
   }
@@ -203,10 +209,10 @@ export const GamePage = () => {
 
 
 
-  const submitRandomCpuResponse = (game: Game, currentClue : GameClue, secondAttempt: boolean) => {
+  const submitRandomCpuResponse = (game: Game, currentClue : GameClue, interval: NodeJS.Timeout, timeout: NodeJS.Timeout) => {
     //randomize response time
-    //set cpu timer bewteen 12 and 16
-    const randomInt = Math.floor(Math.random() * 4) + 12
+    //set cpu timer bewteen 6 and 10
+    const randomInt = Math.floor(Math.random() * 4) + 6
     const duration = randomInt * 1000
     setTimeout(() => {
       
@@ -227,7 +233,13 @@ export const GamePage = () => {
         setResponse(fresh_response)
       }
 
-      handleResponse(game, currentClue, fresh_response)
+      //clear interval here since state will not show up in response handler yet
+      clearInterval(interval)
+      setClockInterval(undefined)
+      clearTimeout(timeout)
+      setClockTimeout(undefined)
+
+      handleResponse(game, currentClue, fresh_response, 'cpu')
 
     }, duration)
 
@@ -238,11 +250,8 @@ export const GamePage = () => {
    const submitResponseHandler = (event: React.FormEvent<HTMLFormElement> ) => {
     event.preventDefault()
     if (!game || !currentClue) return 
-    if (clockInterval) {
-      clearTimeout(clockInterval)
-      setClockInterval(undefined)
-    }
-    handleResponse(game, currentClue, response)
+   
+    handleResponse(game, currentClue, response, 'user')
   }
 
 
@@ -257,7 +266,7 @@ export const GamePage = () => {
 
 
 
-  const handleResponse = (game: Game, current: GameClue, response: string) => {
+  const handleResponse = (game: Game, current: GameClue, response: string, user: string) => {
     // get user 
     // const userString = user ? 'user' : 'cpu'
     
@@ -274,10 +283,13 @@ export const GamePage = () => {
     // console.log('cleared interval', current.interval)
     
 
-    if (clockInterval && clockTimeout){
-      clearTimeout(clockTimeout)
+    if (clockInterval){
       clearInterval(clockInterval)
       setClockInterval(undefined)
+    }
+
+    if (clockTimeout){
+      clearTimeout(clockTimeout)
       setClockTimeout(undefined)
     }
 
@@ -298,12 +310,12 @@ export const GamePage = () => {
             value: current.clue.value, 
             categoryIndex: current.location.category , 
             questionIndex: current.location.question, 
+            answered_by: user
            
           }
           addAnswerToGame(game, current, answer)
-          // close modal, clear response and switch turns
+          // close modal, clear response 
           onClose()
-          // setPlayersTurn(!playersTurn)
           setResponse('')
 
         }, 5000)
@@ -322,12 +334,13 @@ export const GamePage = () => {
               value: current.clue.value, 
               categoryIndex: current.location.category , 
               questionIndex: current.location.question, 
-              
+              answered_by: user
             }
             addAnswerToGame(game, current, answer)
-            // close modal, clear response
+            // close modal, clear response, change turns
             onClose()
             setResponse('')
+            setPlayersTurn(!playersTurn)
   
           }
           

@@ -6,6 +6,7 @@ export interface Answer {
   value: number
   categoryIndex: number
   questionIndex: number
+  answered_by: string
 }
 
 // data coming in from api
