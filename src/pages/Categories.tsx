@@ -27,14 +27,65 @@ export const Categories = () => {
     const randomNumber = Math.floor(Math.random() * 10000)
     console.log(randomNumber)
     // fetch a list of categories and set to state
-    const response = await fetch(`https://jservice.io/api/categories?count=6&offset=${randomNumber}`)
+    const response = await fetch(`https://jservice.io/api/categories?count=6&offset=${10}`)
     const data: Category[] = await response.json()
     console.log('received categories', data)
     setCategories(data)
-    setGame({
-      categories: data,
-      answers: []
-    })
+    // setGame({
+    //   categories: data,
+    //   answers: []
+    // })
+
+
+    const testingCategories: Category[] = 
+    [
+      {
+        id: 15053,
+        title: "i'm taking french leave",
+        clues_count: 10,
+        clues: []
+      },
+      {
+        
+        id: 655,
+        title: 'the 50 states',
+        clues_count: 70,
+        clues: []
+      },
+      {
+        
+        id: 15446,
+        title: 'let me call your attention...',
+        clues_count: 10,
+        clues: []
+      },
+      {
+        
+        id: 15497,
+        title: 'cartoon voices',
+        clues_count: 10,
+        clues: []
+      },
+      {
+        
+        id: 18177,
+        title: "carb's",
+        clues_count: 5,
+        clues: []
+      },
+      {
+        
+        id: 15699,
+        title: 'does this dressing make me look fat?',
+        clues_count: 10,
+        clues: []
+      }
+    ]
+
+   setGame({
+     categories: testingCategories,
+     answers: []
+   })
   }
 
   // set to local storage on button click

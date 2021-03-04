@@ -6,54 +6,87 @@ import {
   Avatar,
   Badge
 } from "@chakra-ui/react"
+import { Answer } from "../types"
 
 
+interface ScoreboardProps {
+  answers: Answer[]
+}
 
-export const Scoreboard = () => (
-      <VStack mt={4}>
+export const Scoreboard: React.FC<ScoreboardProps> = ( { answers } ) => {
 
-        {/* player1 */}
-        <Box p={2} bg='green.300' borderRadius='lg' w='60'>
-          {/* nameplate */}
-          <Box d='flex' justifyContent='space-between' alignItems='center'>
-            <Avatar size='lg' name="Dan Abrahmov" src="https://bit.ly/dan-abramov" />
-            <Box d='flex' alignItems='flex-start' justifyContent='center' flexDirection='column'>
-              <Text fontSize={20} fontWeight='semibold'>
-                Player 1
-              </Text>
-              <Badge >It's Your Turn</Badge>
-            </Box>
-          </Box>
+  const [playerScore, setPlayerScore] = React.useState(0)
+  const [computerScore, setComputerScore] = React.useState(0)
+  const [playersTurn, setPlayersTurn] = React.useState(true)
+  const [winning, setWinning] = React.useState(true)
 
-          {/* cash score */}
-          <Box mt={2}>
-            <Text fontSize={26} fontFamily='cursive'>
-              $17,620
-            </Text>
-          </Box>
-        </Box>
+  React.useEffect(() => {
+    //tally scores
+    let playerTally = 0
+    let cpuTally = 0
+    for (let answer of answers){
+      if (answer.correct){
+        playerTally += answer.value
+      } else {
+        cpuTally += answer.value
+      }
+    }
+    setComputerScore(cpuTally)
+    setPlayerScore(playerTally)
 
-        {/* player2 */}
-        <Box p={2} bg='gray.400' borderRadius='lg' w='60'>
-          {/* nameplate */}
-          <Box d='flex' flexDirection='row-reverse' justifyContent='space-between' alignItems='center'>
-            <Avatar  size='lg' name="Kent Dodds" src="https://bit.ly/kent-c-dodds" />
-            <Box d='flex' alignItems='flex-start' justifyContent='center' flexDirection='column'>
+    //set winner 
+    if (playerTally > cpuTally) {
+      setWinning(true)
+    } else if (playerTally < cpuTally) {
+      setWinning(false)
+    }
+  }, [answers])
+
+
+  return (
+    <VStack mt={4}>
+
+      {/* player */}
+      <Box p={2} bg={winning ? 'green.300' : 'gray.400'} borderRadius='lg' w='60'>
+        {/* nameplate */}
+        <Box d='flex' justifyContent='space-between' alignItems='center'>
+          <Avatar size='lg' name="" src="https://bit.ly/dan-abramov" />
+          <Box d='flex' alignItems='flex-start' justifyContent='center' flexDirection='column'>
             <Text fontSize={20} fontWeight='semibold'>
-                Player 2
-              </Text>
-              
-            </Box>
+              Player
+            </Text>
+            { playersTurn && <Badge >It's Your Turn</Badge> }
           </Box>
-          {/* cash score */}
-          <Box mt={2}>
-            <Text fontSize={20} fontFamily='cursive'>
-              $10,450
+        </Box>
+        {/* cash score */}
+        <Box mt={2}>
+          <Text fontSize={26} fontFamily='cursive'>
+            ${playerScore}
+          </Text>
+        </Box>
+      </Box>
+
+      {/* cpu */}
+      <Box p={2} bg={winning ? 'gray.400': 'green.300' } borderRadius='lg' w='60'>
+        {/* nameplate */}
+        <Box d='flex' flexDirection='row-reverse' justifyContent='space-between' alignItems='center'>
+          <Avatar  size='lg' name="" src="https://bit.ly/kent-c-dodds" />
+          <Box d='flex' alignItems='flex-start' justifyContent='center' flexDirection='column'>
+          <Text fontSize={20} fontWeight='semibold'>
+              Computer
             </Text>
           </Box>
         </Box>
+        {/* cash score */}
+        <Box mt={2}>
+          <Text fontSize={20} fontFamily='cursive'>
+            ${computerScore}
+          </Text>
+        </Box>
+      </Box>
 
-        
-        
-      </VStack>
+      
+      
+    </VStack>
 )
+}

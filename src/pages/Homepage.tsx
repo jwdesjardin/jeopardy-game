@@ -9,26 +9,26 @@ import {
 } from "@chakra-ui/react"
 
 import { Link as RouterLink} from 'react-router-dom'
-import { Game } from "../types"
+
  
-
-
 export const Homepage = () => {
 
-  // const [game, setGame] = React.useState<Game | undefined>()
   const [ resume, setResume] = React.useState(false)
+
   React.useEffect(() => {
     const foundGame = localStorage.getItem('jeopardyGame')
     if (foundGame){
       console.log('game found in local storage local storage')
-      // const parsedGame = JSON.parse(foundGame)
-      // setGame(parsedGame)
       setResume(true)
     } else {
       console.log('no game found in local storage')
     }
   
   },[])
+
+  const newGameHandler = () => {
+    localStorage.removeItem('jeopardyGame')
+  }
 
   return (
     <Container>
@@ -39,10 +39,11 @@ export const Homepage = () => {
           </Heading>
           <VStack spacing={2} width='100%'>
             <Link as={RouterLink} to='/categories'>
-            <Button width='60' p='10' bg='blue.500' >Start Game?</Button>
+              <Button width='60' p='10' bg='blue.500' onClick={newGameHandler} >Start Game?</Button>
             </Link>
-            <Button width='60' p='10' bg='green.300' disabled={!resume} >Resume Game?</Button>
-            
+            <Link as={RouterLink} to='/game'>
+              <Button width='60' p='10' bg='green.300' disabled={!resume} >Resume Game?</Button>
+            </Link>
           </VStack>
       </Box>
       </Box>

@@ -32,3 +32,14 @@ export interface Game {
   categories: Category[]
   answers: Answer[]
 }
+
+export interface GameClue {
+  clue: Clue,
+  interval: NodeJS.Timeout | undefined
+  location: {
+    category: number,
+    question: number
+  }
+}
+
+
