@@ -66,7 +66,7 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
     if (!game){
       setGame(getGame())
     }
-    if (!clues){
+    if (clues.length === 0){
       if (game) getClues(game)
       else console.log('error getting clues and game')
     }
@@ -121,6 +121,7 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
         for (let category of categories){
           const response = await fetch(`https://jservice.io/api/category?id=${category.id}`)
           const fetchResults = await response.json()
+          console.log('fetch results', fetchResults)
           if (fetchResults){
             setClues(prevState => [ ...prevState, fetchResults])
           }
@@ -364,6 +365,8 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
     
     let newString = answer
 
+    // escape backslashes
+    newString = newString.replace(/\\/, '')
     // dont require tags 
     newString = newString.replace(/^<[a-z]+>/, '')
     newString = newString.replace(/<\/[a-z]+>$/, '')

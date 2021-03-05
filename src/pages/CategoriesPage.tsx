@@ -26,7 +26,7 @@ export const CategoriesPage: React.FC = () => {
     const randomNumber = Math.floor(Math.random() * 10000)
     console.log(randomNumber)
     // fetch a list of categories and set to state
-    const response = await fetch(`https://jservice.io/api/categories?count=6&offset=${10}`)
+    const response = await fetch(`https://jservice.io/api/categories?count=6&offset=${randomNumber}`)
     const data: Category[] = await response.json()
     console.log('received categories', data)
     setCategories(data)
