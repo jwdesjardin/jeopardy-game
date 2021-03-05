@@ -24,8 +24,13 @@ import {Scoreboard} from '../components/Scoreboard'
 import { Category, Clue, Answer, Game, GameClue } from '../types'
 
 import {testingClues} from '../clues'
+import { RouteComponentProps } from "react-router-dom"
 
-export const GamePage = () => {
+interface GamePageProps extends RouteComponentProps<any>{
+  
+}
+
+export const GamePage: React.FC<GamePageProps> = ({ history }) => {
 
   const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -60,6 +65,13 @@ export const GamePage = () => {
     if (!clues){
       if (game) getClues(game)
       else console.log('error getting clues and game')
+    }
+
+
+    if (game && game.answers.length === 30){
+      console.log('game over')
+      // displayGameOverScreen()
+      history.push('/game-summary')
     }
 
     console.log('players turn', playersTurn)

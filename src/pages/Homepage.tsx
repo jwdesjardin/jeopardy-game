@@ -11,8 +11,8 @@ import {
 import { Link as RouterLink} from 'react-router-dom'
 
  
-export const Homepage = () => {
-
+export const HomePage: React.FC = () => {
+ 
   const [ resume, setResume] = React.useState(false)
 
   React.useEffect(() => {

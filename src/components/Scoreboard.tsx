@@ -24,13 +24,18 @@ export const Scoreboard: React.FC<ScoreboardProps> = ( { answers, playersTurn } 
     //tally scores
     let playerTally = 0
     let cpuTally = 0
+
+    // loop through answers 
     for (let answer of answers){
-      if (answer.correct){
+      if (answer.answered_by === 'user' && answer.correct){
         playerTally += answer.value
-      } else {
+      }
+
+      if (answer.answered_by === 'cpu' && answer.correct){
         cpuTally += answer.value
       }
     }
+    
     setComputerScore(cpuTally)
     setPlayerScore(playerTally)
 

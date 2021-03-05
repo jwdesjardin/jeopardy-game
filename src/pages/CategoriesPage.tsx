@@ -11,9 +11,8 @@ import {
 
 import { Link as RouterLink} from 'react-router-dom'
 import { Category, Game } from "../types"
-import { waitFor } from "@testing-library/react"
 
-export const Categories = () => {
+export const CategoriesPage: React.FC = () => {
 
   const [categories, setCategories] = React.useState<Category[]>([])
   const [game, setGame ] = React.useState<Game | undefined>()
