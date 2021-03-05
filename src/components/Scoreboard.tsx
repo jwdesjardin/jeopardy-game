@@ -3,7 +3,8 @@ import {
   Box,
   Text,
   VStack,
-  Badge
+  Badge,
+  Spinner
 } from "@chakra-ui/react"
 import { Answer } from "../types"
 
@@ -11,9 +12,10 @@ import { Answer } from "../types"
 interface ScoreboardProps {
   answers: Answer[]
   playersTurn: boolean
+  cpuLoading: boolean
 }
 
-export const Scoreboard: React.FC<ScoreboardProps> = ( { answers, playersTurn } ) => {
+export const Scoreboard: React.FC<ScoreboardProps> = ( { answers, playersTurn, cpuLoading } ) => {
 
   const [playerScore, setPlayerScore] = React.useState(0)
   const [computerScore, setComputerScore] = React.useState(0)
@@ -75,9 +77,18 @@ export const Scoreboard: React.FC<ScoreboardProps> = ( { answers, playersTurn } 
         {/* nameplate */}
         <Box d='flex' flexDirection='row-reverse' justifyContent='space-between' alignItems='center'>
           <Box d='flex' alignItems='flex-start' justifyContent='center' flexDirection='column'>
-          <Text fontSize={20} fontWeight='semibold'>
+            <Text fontSize={20} fontWeight='semibold'>
               Computer
             </Text>
+            { cpuLoading && 
+            <Spinner
+              thickness="4px"
+              speed="1s"
+              emptyColor="gray.200"
+              color="gray.800"
+              size="xl"
+            />
+            }
           </Box>
         </Box>
         {/* cash score */}

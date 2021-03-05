@@ -15,7 +15,8 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
-  Center
+  Center,
+  Spinner
 } from "@chakra-ui/react"
 
 import {GameBoard} from '../components/GameBoard'
@@ -51,7 +52,7 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
   const [ responseDisplayToggle, setResponseDisplayToggle]  = React.useState(false)
   const [ responseCorrect, setResponseCorrect]  = React.useState(false)
   const [ menuDisplayToggle, setMenuDisplayToggle]  = React.useState(false)
-  
+  const [ cpuLoading, setCpuLoading ] = React.useState(false)
 
   // use Modal
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -83,7 +84,13 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
     // if it is cpu turn pick a question and respond
     if (!playersTurn && game){
       console.log('cpu is choosing a question')
+      
+      //show cpu loader
+      setCpuLoading(true)
+
+      //in 4 seconds pick a question and turn off loader
       setTimeout(() => {
+        setCpuLoading(false)
         cpuPickRandomQuestion(game)
       }, 4000)
     }
@@ -268,12 +275,18 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
   // *************************************************
 
   const submitRandomCpuResponse = (game: Game, currentClue : GameClue, interval: NodeJS.Timeout, timeout: NodeJS.Timeout) => {
+    
+    // start showing the cpu loader
+    setCpuLoading(true)
+    
     //randomize response time
     //set cpu timer bewteen 6 and 10
     const randomInt = Math.floor(Math.random() * 4) + 6
     const duration = randomInt * 1000
     setTimeout(() => {
       
+      setCpuLoading(false)
+
        //randomize correct or wrong
       // get ranom number between 0 and 1
       const correct = Math.floor(Math.random() * 2)
@@ -445,7 +458,7 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
       <VStack spacing={4}>
         {/* heading box */}
         <Box textAlign='center'>
-          <Heading  fontSize='3.5rem' fontFamily='fantasy' letterSpacing='wide'>
+          <Heading  fontSize='3.5rem' fontFamily='heading' letterSpacing='wide'>
             Jeopardy
           </Heading>
         </Box>
@@ -457,7 +470,7 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
 
         {/* scoreboard */}
         { game &&
-          <Scoreboard playersTurn={playersTurn} answers={game.answers} />
+          <Scoreboard cpuLoading={cpuLoading} playersTurn={playersTurn} answers={game.answers} />
         }
       </VStack>
 
@@ -470,7 +483,16 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
           <ModalCloseButton />
           <ModalBody>
             <Text fontSize={26} textAlign='center'>{currentClue.clue.question}</Text>
-            <Text fontFamily='fantasy' fontSize={36} >{questionTimeRemaining}</Text>
+            <Text fontFamily='cursive' fontSize={36} >{questionTimeRemaining}</Text>
+            { cpuLoading && 
+              <Spinner
+                thickness="4px"
+                speed="1s"
+                emptyColor="gray.200"
+                color="gray.800"
+                size="xl"
+              />
+            }
           </ModalBody>
           <ModalFooter>
             <form onSubmit={submitResponseHandler}>

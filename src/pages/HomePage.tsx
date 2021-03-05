@@ -34,7 +34,7 @@ export const HomePage: React.FC = () => {
     <Container>
       <Box display='flex' h='90vh' alignItems='center' justifyContent='center'>
       <Box textAlign="center" fontSize="xl">
-          <Heading mb='10' fontSize='4rem' fontFamily='fantasy' letterSpacing='wide' >
+          <Heading mb='10' fontSize='4rem' fontFamily='heading' letterSpacing='wide' >
             Jeopardy
           </Heading>
           <VStack spacing={2} width='100%'>

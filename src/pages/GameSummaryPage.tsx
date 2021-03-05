@@ -150,7 +150,7 @@ export const GameSummaryPage: React.FC = () => {
       <VStack spacing={3}>
       {/* page header */}
       <Box textAlign="center" fontSize="xl">
-        <Heading  fontSize='3rem' fontFamily='fantasy' letterSpacing='wide'>Game Summary</Heading>
+        <Heading  fontSize='3rem' fontFamily='heading' letterSpacing='wide'>Game Summary</Heading>
       </Box>
 
       {/* winner message */}

@@ -47,7 +47,7 @@ export const CategoriesPage: React.FC = () => {
 
       {/* page header   */}
       <Box textAlign="center" fontSize="xl">
-        <Heading  fontSize='3rem' fontFamily='fantasy' letterSpacing='wide'>Categories</Heading>
+        <Heading  fontSize='3rem' fontFamily='heading' letterSpacing='wide'>Categories</Heading>
       </Box>
 
       {/* grid of categories */}
