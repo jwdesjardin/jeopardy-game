@@ -2,9 +2,7 @@ import * as React from "react"
 import {
   Box,
   VStack,
-  Grid,
   Heading,
-  Button,
   Container,
   Text,
   Input,
@@ -22,7 +20,7 @@ import {
 
 import {GameBoard} from '../components/GameBoard'
 import {Scoreboard} from '../components/Scoreboard'
-import { Category, Clue, Answer, Game, GameClue } from '../types'
+import { Category, Answer, Game, GameClue } from '../types'
 
 import {testingClues} from '../clues'
 import { RouteComponentProps } from "react-router-dom"
@@ -40,7 +38,7 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
 
   // STATE: game
   const [game, setGame] = React.useState<Game | undefined>()
-  const [clues, setClues] = React.useState<Category[]>(testingClues)
+  const [clues, setClues] = React.useState<Category[]>([])
   
 
   // STATE: question
@@ -93,6 +91,7 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
     }
 
   // only rerun this when an answer is added to the game
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ game ])
 
 
