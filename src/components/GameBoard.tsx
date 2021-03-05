@@ -5,7 +5,7 @@ import {
   Button,
   Text,
 } from "@chakra-ui/react"
-import { Answer, Category, Game } from "../types"
+import { Answer, Game } from "../types"
 
 
 

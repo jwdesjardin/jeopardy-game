@@ -7,7 +7,6 @@ import {
   ChakraProvider,
   theme,
 } from "@chakra-ui/react"
-import { SettingsIcon } from '@chakra-ui/icons'
 import { ColorModeSwitcher } from "./components/ColorModeSwitcher"
 
 // pages

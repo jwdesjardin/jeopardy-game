@@ -3,7 +3,6 @@ import {
   Box,
   Text,
   VStack,
-  Avatar,
   Badge
 } from "@chakra-ui/react"
 import { Answer } from "../types"

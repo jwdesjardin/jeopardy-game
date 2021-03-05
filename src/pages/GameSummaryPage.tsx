@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react"
 
 import { Link as RouterLink} from 'react-router-dom'
-import { Category, Game } from "../types"
+import { Game } from "../types"
 import { StarIcon } from "@chakra-ui/icons"
 
 export const GameSummaryPage: React.FC = () => {

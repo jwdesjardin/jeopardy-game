@@ -21,8 +21,6 @@ import {
 import {GameBoard} from '../components/GameBoard'
 import {Scoreboard} from '../components/Scoreboard'
 import { Category, Answer, Game, GameClue } from '../types'
-
-import {testingClues} from '../clues'
 import { RouteComponentProps } from "react-router-dom"
 import { CheckCircleIcon, NotAllowedIcon, SettingsIcon } from "@chakra-ui/icons"
 
