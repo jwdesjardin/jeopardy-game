@@ -52,10 +52,9 @@ export const Scoreboard: React.FC<ScoreboardProps> = ( { answers, playersTurn } 
     <VStack mt={4}>
 
       {/* player */}
-      <Box p={2} bg={winning ? 'green.300' : 'gray.400'} borderRadius='lg' w='60'>
+      <Box p={2} bg={winning ? 'green.300' : 'gray.500'} borderRadius='lg' w='60'>
         {/* nameplate */}
         <Box d='flex' justifyContent='space-between' alignItems='center'>
-          <Avatar size='lg' name="" src="https://bit.ly/dan-abramov" />
           <Box d='flex' alignItems='flex-start' justifyContent='center' flexDirection='column'>
             <Text fontSize={20} fontWeight='semibold'>
               Player
@@ -73,10 +72,9 @@ export const Scoreboard: React.FC<ScoreboardProps> = ( { answers, playersTurn } 
       </Box>
 
       {/* cpu */}
-      <Box p={2} bg={winning ? 'gray.400': 'green.300' } borderRadius='lg' w='60'>
+      <Box p={2} bg={winning ? 'gray.500': 'green.300' } borderRadius='lg' w='60'>
         {/* nameplate */}
         <Box d='flex' flexDirection='row-reverse' justifyContent='space-between' alignItems='center'>
-          <Avatar  size='lg' name="" src="https://bit.ly/kent-c-dodds" />
           <Box d='flex' alignItems='flex-start' justifyContent='center' flexDirection='column'>
           <Text fontSize={20} fontWeight='semibold'>
               Computer
@@ -84,8 +82,8 @@ export const Scoreboard: React.FC<ScoreboardProps> = ( { answers, playersTurn } 
           </Box>
         </Box>
         {/* cash score */}
-        <Box mt={2}>
-          <Text fontSize={20} fontFamily='cursive'>
+        <Box d='flex' flexDirection='row-reverse' justifyContent='space-between' alignItems='center' mt={2}>
+          <Text fontSize={26} fontFamily='cursive'>
             ${computerScore}
           </Text>
         </Box>

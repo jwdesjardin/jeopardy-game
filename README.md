@@ -11,8 +11,8 @@ npx create-react-app client --template @chakra-ui/typescript
 - [x] selectCategories page
 - [x] game board
 - [x] question page overlay
-- [ ] question response overlay
-- [ ] options menu overlay
+- [x] question response overlay
+- [x] options menu overlay
 - [x] game summary
 
 ## features
@@ -30,7 +30,7 @@ npx create-react-app client --template @chakra-ui/typescript
 - [x] determing a win(all questions answered)
 - [x] showing summary
 - [x] restarting game (play again)
-- [ ] quiting a game early
+- [x] quiting a game early
 - [x] resume a game on browser close
 
 ## state

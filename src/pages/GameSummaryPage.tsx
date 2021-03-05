@@ -147,7 +147,7 @@ export const GameSummaryPage: React.FC = () => {
 
   return (
     <Container>
-      <VStack spacing={10}>
+      <VStack spacing={3}>
       {/* page header */}
       <Box textAlign="center" fontSize="xl">
         <Heading  fontSize='3rem' fontFamily='fantasy' letterSpacing='wide'>Game Summary</Heading>
@@ -241,10 +241,10 @@ export const GameSummaryPage: React.FC = () => {
       {/* buttons */}
       <HStack spacing={2}>
         <RouterLink to='/categories'>
-          <Button p={6} w='60' bg='green.600' >Play Again?</Button>
+          <Button p={6}  bg='green.600' >Play Again?</Button>
         </RouterLink>
         <RouterLink to='/home'>
-          <Button p={6} w='60' bg='yellow.400' >Return Home</Button>
+          <Button p={6} bg='yellow.400' >Return Home</Button>
         </RouterLink>
       </HStack>
       </VStack>

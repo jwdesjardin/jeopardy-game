@@ -23,9 +23,6 @@ export const App = () => (
     <Router>
       <Box p='2' d='flex' alignItems='center' justifyContent='space-between'>
         <ColorModeSwitcher  />
-        <SettingsIcon mx='2'/>
-
-
       </Box>
       <Switch>
         <Route exact path='/' render={() => <Redirect to='/home'/>} />

@@ -16,7 +16,8 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
-  ModalFooter
+  ModalFooter,
+  Center
 } from "@chakra-ui/react"
 
 import {GameBoard} from '../components/GameBoard'
@@ -25,6 +26,9 @@ import { Category, Clue, Answer, Game, GameClue } from '../types'
 
 import {testingClues} from '../clues'
 import { RouteComponentProps } from "react-router-dom"
+import { CheckCircleIcon, NotAllowedIcon, SettingsIcon } from "@chakra-ui/icons"
+
+import { Link as RouterLink} from 'react-router-dom'
 
 interface GamePageProps extends RouteComponentProps<any>{
   
@@ -32,72 +36,76 @@ interface GamePageProps extends RouteComponentProps<any>{
 
 export const GamePage: React.FC<GamePageProps> = ({ history }) => {
 
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  
 
+  // STATE: game
   const [game, setGame] = React.useState<Game | undefined>()
   const [clues, setClues] = React.useState<Category[]>(testingClues)
-  const [currentClue, setCurrentClue] = React.useState<GameClue | undefined>()
+  
 
-  const [response, setResponse] = React.useState('')
+  // STATE: question
+  const [currentClue, setCurrentClue] = React.useState<GameClue | undefined>()
   const [playersTurn, setPlayersTurn ] = React.useState(true)
   const [questionTimeRemaining, setQuestionTimeRemaining] = React.useState(25)
   const [clockInterval, setClockInterval] = React.useState<NodeJS.Timeout | undefined>()
   const [clockTimeout, setClockTimeout] = React.useState<NodeJS.Timeout | undefined>()
+  const [response, setResponse] = React.useState('')
 
+  // STATE : display
   const [ responseDisplayToggle, setResponseDisplayToggle]  = React.useState(false)
-  const [ secondAttempt, setSecondAttempt] = React.useState(false)
+  const [ responseCorrect, setResponseCorrect]  = React.useState(false)
+  const [ menuDisplayToggle, setMenuDisplayToggle]  = React.useState(false)
   
 
+  // use Modal
+  const { isOpen, onOpen, onClose } = useDisclosure()
   
-// ON PAGE LOAD FILLING IN GAME AND CLUES 
+  // *************************************************
+  // ON PAGE LOAD AND QUESTION ANSWER
+  // ************************************************* 
 
-
-
-
-  
   React.useEffect(() => {
 
     // get game and clues
     if (!game){
       setGame(getGame())
     }
-
     if (!clues){
       if (game) getClues(game)
       else console.log('error getting clues and game')
     }
 
-
+    // CASE: game over
     if (game && game.answers.length === 30){
       console.log('game over')
       // displayGameOverScreen()
       history.push('/game-summary')
     }
 
-    console.log('players turn', playersTurn)
+    console.log('New turn: ', playersTurn ? 'user' : 'cpu')
 
+    // if it is cpu turn pick a question and respond
     if (!playersTurn && game){
-      console.log('choosing question')
+      console.log('cpu is choosing a question')
       setTimeout(() => {
         cpuPickRandomQuestion(game)
       }, 4000)
     }
-
-    
 
   // only rerun this when an answer is added to the game
   }, [ game ])
 
 
   
-  // SETTING UP GAME
-
+  // *************************************************
+  // SETTING UP A GAME
+  // *************************************************
 
   const getGame = () => {
     // set categories from storage
     const foundGame: Game  = JSON.parse(localStorage.getItem('jeopardyGame') || '{}')
     
-    // reutrn early if no game was found
+    // return early if no game was found
     if (Object.keys(foundGame).length === 0){
       console.log('no game found from local storage')
       return 
@@ -109,55 +117,44 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
 
   const getClues = (game: Game) => {
    
+    // fethes clues for each category id
     const getAllClues = async (game: Game) => {
       const categories = game.categories
       try {
         for (let category of categories){
-          const fetchResults = await fetchCategory(category.id)
+          const response = await fetch(`https://jservice.io/api/category?id=${category.id}`)
+          const fetchResults = await response.json()
           if (fetchResults){
             setClues(prevState => [ ...prevState, fetchResults])
           }
         }
-        
       } catch (error) {
         console.log(error);
       }
     }
-
+    // call the asnyc function
     getAllClues(game)
   }
 
-  const fetchCategory = async (id: number ): Promise<Category | undefined> => {
-    try {
-      const response = await fetch(`https://jservice.io/api/category?id=${id}`)
-      const data = await response.json()
-      return data
-    } catch (error) {
-      console.log(error);
-    }
-    
-  }
-
-
-
-
+  // *************************************************
   // CHOOSING A QUESTION
+  // *************************************************
 
-
-
-
+  // user picks a question
   const clickQuestionHandler = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     // read event and find coordinates of clue
     const element = event.currentTarget as HTMLInputElement
     if (element.getAttribute('disabled') === 'true') return 
     if (element.value){
-      // get numbers from button element value
+      // get category and question indexes from coordinates
       const coords = element.value.split(':')
       const category = parseInt(coords[0])
       const question = parseInt(coords[1])
       
+      // find clue using indexes and the clues state 
       const foundClue = clues[category].clues[question]
-      
+
+      // create currentClue Object
       const foundCurrentClue = {
         clue: foundClue,
         interval: undefined,
@@ -167,19 +164,21 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
         }
       }
 
+      // set the currentClue to state, call display with the current clue
       console.log('found the question', foundCurrentClue) 
-      setCurrentClue(foundCurrentClue)
+      setCurrentClue(foundCurrentClue) // to change render state
       displayQuestion(foundCurrentClue, 25)
 
-      //set button as disabled
+      //set button as disabled , may not need this if answering will disable already
       element.setAttribute('disabled', 'true')
      }
     
   }
 
+  // cpu picks a question and responds
   const cpuPickRandomQuestion = (game: Game) => {
     
-      // fill array asked question with index of all asked questions
+      // fill array with index of all asked questions
       const answers = game.answers
       const askedQuestions: number[] = []
       for (let answer of answers){
@@ -196,10 +195,12 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
       }
       const availableQuestions = range.filter(num => !askedQuestions.includes(num))
       console.log('available questions', availableQuestions)
-      // get a random int from 0 to array.length - 1
+
+      // get a random index from the avilable questions
       const randomInt = Math.floor(Math.random() * availableQuestions.length)
       const randomIndex = availableQuestions[randomInt]
       console.log('random index', randomIndex)
+
       // get coords from index
       let category: number
       let question: number
@@ -211,8 +212,10 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
         question = Math.floor(randomIndex / 6)
       }
     
+      // find clue using indexes and the clues state 
       const foundClue = clues[category].clues[question]
       
+      // create currentClue object
       const foundCurrentClue = {
         clue: foundClue,
         interval: undefined,
@@ -222,63 +225,49 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
         }
       }
 
+      // set the currentClue to state, call display with the current clue
       console.log('cpu picked question', foundCurrentClue) 
       setCurrentClue(foundCurrentClue)
       displayQuestion(foundCurrentClue, 25)
   }
 
-  
-
-
-  //RUNNING A QUESTION
-
+  // *************************************************
+  // RUNNING A QUESTION
+  // *************************************************
 
   const displayQuestion = (gameClue: GameClue, seconds: number) => {
     if (!game) return 
+
+    // open the modal
     onOpen()
 
-    //set the display time in seconds
+    //set the question time remaining state
     setQuestionTimeRemaining(seconds)
 
-    // start an interval to reduce time and store ref in state
+    // start an interval to tick down the time remaining
     const interval = setInterval(() => {
       setQuestionTimeRemaining(prevState => prevState - 1)
     }, 1000)
     setClockInterval(interval)
   
   
-    // set timeout to handle response and stop timer
+    // set timeout to handle response and stop timer at 0
     const duration = seconds * 1000
     const timeout = setTimeout(() => {
       clearInterval(interval)
-      // setClockInterval(undefined)
-      // setClockTimeout(undefined)
       handleResponse(game, gameClue, response, 'none')
     }, duration)
     setClockTimeout(timeout)
 
+    // submit cpu reponse if cpu turn
     if (!playersTurn){
       submitRandomCpuResponse(game, gameClue, interval, timeout)
     }
-    
-
-  
   }
 
- 
-
- 
-  
-
-
-
-
-
-
-// SUBMITTING A RESPONSE
-
-
-
+  // *************************************************
+  // SUBMITTING A RESPONSE
+  // *************************************************
 
   const submitRandomCpuResponse = (game: Game, currentClue : GameClue, interval: NodeJS.Timeout, timeout: NodeJS.Timeout) => {
     //randomize response time
@@ -325,104 +314,55 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
     handleResponse(game, currentClue, response, 'user')
   }
 
-
-
-
-
-
-
-
-// HANDLING A RESPONSE
-
-
-
+  // *************************************************
+  // HANDLING A RESPONSE
+  // *************************************************
 
   const handleResponse = (game: Game, current: GameClue, response: string, user: string) => {
-    // get user 
-    // const userString = user ? 'user' : 'cpu'
-    
-
-    // console.log('recieved interval', current.interval)
-
-    // // if timer is running stop it
-    // const interval = current.interval
-    // if (interval){
-    //   clearTimeout(interval)
-    //   current.interval = undefined
-    // }
-
-    // console.log('cleared interval', current.interval)
-    
-
-    // this will be used on user input
+   
+    // this will be used on user input to stop the question clock
     if (clockInterval){
       clearInterval(clockInterval)
       setClockInterval(undefined)
     }
-
     if (clockTimeout){
       clearTimeout(clockTimeout)
       setClockTimeout(undefined)
     }
 
-
-
     //handle response
-      //correct response
-      if (isResponseCorrect(current.location.category, current.location.question, response)){
-        console.log('correct response')
-        displayResponse(5)
-        
-        setTimeout(() => {
-          // add answer
-          const answer = { 
-            id: current.clue.id, 
-            response, 
-            correct: true, 
-            value: current.clue.value, 
-            categoryIndex: current.location.category , 
-            questionIndex: current.location.question, 
-            answered_by: user
-           
-          }
-          addAnswerToGame(game, current, answer)
-          // close modal, clear response 
-          onClose()
-          setResponse('')
+    const correct = isResponseCorrect(current.location.category, current.location.question, response)
+    console.log(correct ? 'correct response' : 'incorrect response')
+    displayResponse(5, correct)
+    
+    setTimeout(() => {
+      // create answer
+      const answer = { 
+        id: current.clue.id, 
+        response, 
+        correct, 
+        value: current.clue.value, 
+        categoryIndex: current.location.category , 
+        questionIndex: current.location.question, 
+        answered_by: user
+       
+      }
 
-        }, 5000)
-        
-      
-      } else { // incorrect response
-        console.log('incorrect response')
-        displayResponse(5)
+      // change turns if not correct
+      if (!correct){
+        setPlayersTurn(!playersTurn)
+      }
 
-        setTimeout(() => {
-          
-            const answer = { 
-              id: current.clue.id, 
-              response, 
-              correct: false, 
-              value: current.clue.value, 
-              categoryIndex: current.location.category , 
-              questionIndex: current.location.question, 
-              answered_by: user
-            }
-            setPlayersTurn(!playersTurn)
-            addAnswerToGame(game, current, answer)
-            // close modal, clear response, change turns
-            onClose()
-            setResponse('')
-            
-  
-          }
-          
-        , 5000)
+       // add answer, close modal, clear response 
+      addAnswerToGame(game, current, answer)
+      onClose()
+      setResponse('')
 
-      } 
+    }, 5000)
+ 
   }
     
-  
+  // clean API answers 
   const stripAnswer = (answer: string) => {
     
     let newString = answer
@@ -430,16 +370,17 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
     // dont require tags 
     newString = newString.replace(/^<[a-z]+>/, '')
     newString = newString.replace(/<\/[a-z]+>$/, '')
-    //dont require 'a ' or 'an ' at the beginning of response
+    //dont require 'a ' or 'an ' or 'the ' at the beginning of response
     newString = newString.replace(/^an?\s/, '')
+    newString = newString.replace(/^the\s/, '')
     
-
-    console.log('answer', answer)
-    console.log('new string', newString)
+    console.log('original answer', answer)
+    console.log('cleaned string', newString)
         
     return newString
   }
   
+  // determine if a response is correct
   const isResponseCorrect = (categoryIndex: number, questionIndex: number, response: string ): boolean => {
     if (response === '') return false
     
@@ -451,6 +392,7 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
       const answerString = clue.answer.replace(/\s\(([\w\s]+)\saccepted\)$/, ':$1')
       const answerArray = answerString.split(':')
 
+      // check if reponse includes any of the answers
       for (let answer of answerArray){
         if ( response.toLowerCase().includes(stripAnswer(answer.toLowerCase()))){
           return true
@@ -469,17 +411,21 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
   const addAnswerToGame = (game: Game, current: GameClue, answer: Answer) => {
     if (!current || !game) return 
     
-    const gameUpdate = { 
+    // create game 
+    const gameUpdate: Game = { 
       categories: game.categories, 
       answers: [ ...game.answers , answer ] 
     }
+
+    // set to state and local storage
     setGame(gameUpdate)
     localStorage.setItem('jeopardyGame', JSON.stringify(gameUpdate))
   }
 
-  const displayResponse = (seconds: number) => {
+  const displayResponse = (seconds: number, correct: boolean) => {
     //display response for 5 seconds
     setResponseDisplayToggle(true)
+    setResponseCorrect(correct)
 
     const duration = seconds * 1000
     setTimeout(() => {
@@ -490,6 +436,12 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
   
   return (
     <Container>
+      <Box position='absolute' top='3' right='3' onClick={() => {
+          console.log('menu toggle')
+          setMenuDisplayToggle(!menuDisplayToggle)
+        }}>
+        <SettingsIcon  fontSize={22} mx='2'/>
+      </Box>
       <VStack spacing={4}>
         {/* heading box */}
         <Box textAlign='center'>
@@ -519,7 +471,6 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
           <ModalBody>
             <Text fontSize={26} textAlign='center'>{currentClue.clue.question}</Text>
             <Text fontFamily='fantasy' fontSize={36} >{questionTimeRemaining}</Text>
-            {secondAttempt && <Badge colorScheme='yellow'>Second Attempt</Badge> }
           </ModalBody>
           <ModalFooter>
             <form onSubmit={submitResponseHandler}>
@@ -530,6 +481,73 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
         </ModalContent>
       </Modal>
       }
+
+      {/* questions response overlay */}
+      {
+        responseDisplayToggle && currentClue &&
+        <Box bg={responseCorrect ? 'green.300' : 'red.400' } w='100vw' h='100vh' zIndex='2000' position='absolute' top='0' right='0'>
+          {responseCorrect ?
+          <Center  w='100%' h='100%'>
+          <VStack fontSize={46} spacing={6}>
+            <Text fontSize={22} fontWeight='bold'>{playersTurn ? 'PLAYER' : 'CPU'}</Text>
+            <Text >Correct!</Text>
+            <CheckCircleIcon />
+            <Text>${currentClue.clue.value}</Text>
+            <Box d='flex' flexDirection='column' fontSize={16} border='2px solid black' borderRadius='md' p={2} w='80'>
+              <Box d='flex' alignItems='center' justifyContent='space-between'>
+                <Text fontWeight='bold'>Response: </Text>
+                <Text>{response}</Text>
+              </Box>
+              <Box d='flex' alignItems='center' justifyContent='space-between'>
+                <Text fontWeight='bold'>Correct Answer: </Text>
+                <Text>{currentClue?.clue.answer}</Text>
+              </Box>
+            </Box>
+          </VStack>
+        </Center> :
+          <Center  w='100%' h='100%'>
+            <VStack fontSize={46} spacing={6}>
+              <Text fontSize={22} fontWeight='bold'>{playersTurn ? 'PLAYER' : 'CPU'}</Text>
+              <Text >Wrong!</Text>
+              <NotAllowedIcon />
+              <Box d='flex' flexDirection='column' fontSize={16} border='2px solid black' borderRadius='md' p={2} w='80'>
+                <Box d='flex' alignItems='center' justifyContent='space-between'>
+                  <Text fontWeight='bold'>Response: </Text>
+                  <Text>{response}</Text>
+                </Box>
+                <Box d='flex' alignItems='center' justifyContent='space-between'>
+                  <Text fontWeight='bold'>Correct Answer: </Text>
+                  <Text>{currentClue.clue.answer}</Text>
+                </Box>
+              </Box>
+            </VStack>
+          </Center>
+          }
+        </Box>
+      }
+
+
+      {/* menu overlay */}
+      { menuDisplayToggle &&
+      <Box bg='blue.400' w='100vw' h='100vh' zIndex='4000' position='absolute' top='0' right='0'>
+        <Box position='absolute' top='3' right='3' onClick={() => {
+          console.log('menu toggle')
+          setMenuDisplayToggle(!menuDisplayToggle)
+        }}>
+          <SettingsIcon  fontSize={22} mx='2'/>
+        </Box>
+        <Box d='flex' alignItems='center' justifyContent='center' textAlign='center' h='100%' w='100%'>
+          <RouterLink to='/home'>
+            <Text fontFamily='cursive' fontSize={42} maxWidth='60' noOfLines={2} >Leave Game</Text>
+          </RouterLink>
+        </Box>
+      </Box>
+      }
+     
+
+
+
+
 
     </Container>
 
