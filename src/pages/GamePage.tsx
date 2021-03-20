@@ -25,7 +25,15 @@ import { RouteComponentProps } from 'react-router-dom'
 import { CheckCircleIcon, NotAllowedIcon, SettingsIcon } from '@chakra-ui/icons'
 
 import { Link as RouterLink } from 'react-router-dom'
-import { ContainerVariants, MotionContainer } from '../variants'
+import {
+  ContainerVariants,
+  MenuVariants,
+  MotionBox,
+  MotionContainer,
+  MotionText,
+  ResponseVariants,
+} from '../variants'
+import { AnimatePresence } from 'framer-motion'
 
 interface GamePageProps extends RouteComponentProps<any> {}
 
@@ -437,7 +445,7 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
 
   return (
     <MotionContainer variants={ContainerVariants} initial='initial' animate='animate' exit='exit'>
-      <Box
+      <MotionBox
         position='absolute'
         top='3'
         right='3'
@@ -445,9 +453,10 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
           console.log('menu toggle')
           setMenuDisplayToggle(!menuDisplayToggle)
         }}
+        whileHover={{ rotate: 90 }}
       >
         <SettingsIcon fontSize={22} mx='2' />
-      </Box>
+      </MotionBox>
       <VStack spacing={4}>
         {/* heading box */}
         <Box textAlign='center'>
@@ -466,155 +475,184 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
       </VStack>
 
       {/* question card */}
-      {currentClue && (
-        <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader fontSize={31} fontFamily='cursive'>
-              {clues
-                .filter((clue) => clue.id === currentClue.clue.category_id)
-                .map((category) => category.title)}
-            </ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <Text fontSize={26} textAlign='center'>
-                {currentClue.clue.question}
-              </Text>
-              <Text fontFamily='cursive' fontSize={36}>
-                {questionTimeRemaining}
-              </Text>
-              {cpuLoading && (
-                <Spinner
-                  thickness='4px'
-                  speed='1s'
-                  emptyColor='gray.200'
-                  color='gray.800'
-                  size='xl'
-                />
-              )}
-            </ModalBody>
-            <ModalFooter>
-              <form onSubmit={submitResponseHandler}>
-                {playersTurn ? (
-                  <Badge colorScheme='green'>It's Your Turn</Badge>
-                ) : (
-                  <Badge>Not Your Turn</Badge>
+      <AnimatePresence>
+        {currentClue && (
+          <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader fontSize={31} fontFamily='cursive'>
+                {clues
+                  .filter((clue) => clue.id === currentClue.clue.category_id)
+                  .map((category) => category.title)}
+              </ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <Text fontSize={26} textAlign='center'>
+                  {currentClue.clue.question}
+                </Text>
+                <Text fontFamily='cursive' fontSize={36}>
+                  {questionTimeRemaining}
+                </Text>
+                {cpuLoading && (
+                  <Spinner
+                    thickness='4px'
+                    speed='1s'
+                    emptyColor='gray.200'
+                    color='gray.800'
+                    size='xl'
+                  />
                 )}
-                <Input
-                  size='lg'
-                  placeholder='answer here'
-                  disabled={!playersTurn}
-                  onChange={(e) => setResponse(e.target.value)}
-                  value={response}
-                />
-              </form>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-      )}
+              </ModalBody>
+              <ModalFooter>
+                <form onSubmit={submitResponseHandler}>
+                  {playersTurn ? (
+                    <Badge colorScheme='green'>It's Your Turn</Badge>
+                  ) : (
+                    <Badge>Not Your Turn</Badge>
+                  )}
+                  <Input
+                    size='lg'
+                    placeholder='answer here'
+                    disabled={!playersTurn}
+                    onChange={(e) => setResponse(e.target.value)}
+                    value={response}
+                  />
+                </form>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+        )}
+      </AnimatePresence>
 
-      {/* questions response overlay */}
-      {responseDisplayToggle && currentClue && (
-        <Box
-          bg={responseCorrect ? 'green.300' : 'red.400'}
-          w='100vw'
-          h='100vh'
-          zIndex='2000'
-          position='absolute'
-          top='0'
-          right='0'
-        >
-          {responseCorrect ? (
-            <Center w='100%' h='100%'>
-              <VStack fontSize={46} spacing={6}>
-                <Text fontSize={22} fontWeight='bold'>
-                  {playersTurn ? 'PLAYER' : 'CPU'}
-                </Text>
-                <Text>Correct!</Text>
-                <CheckCircleIcon />
-                <Text>${currentClue.clue.value}</Text>
-                <Box
-                  d='flex'
-                  flexDirection='column'
-                  fontSize={16}
-                  border='2px solid black'
-                  borderRadius='md'
-                  p={2}
-                  w='80'
-                >
-                  <Box d='flex' alignItems='center' justifyContent='space-between'>
-                    <Text fontWeight='bold'>Response: </Text>
-                    <Text>{response}</Text>
-                  </Box>
-                  <Box d='flex' alignItems='center' justifyContent='space-between'>
-                    <Text fontWeight='bold'>Correct Answer: </Text>
-                    <Text>{currentClue?.clue.answer}</Text>
-                  </Box>
-                </Box>
-              </VStack>
-            </Center>
-          ) : (
-            <Center w='100%' h='100%'>
-              <VStack fontSize={46} spacing={6}>
-                <Text fontSize={22} fontWeight='bold'>
-                  {playersTurn ? 'PLAYER' : 'CPU'}
-                </Text>
-                <Text>Wrong!</Text>
-                <NotAllowedIcon />
-                <Box
-                  d='flex'
-                  flexDirection='column'
-                  fontSize={16}
-                  border='2px solid black'
-                  borderRadius='md'
-                  p={2}
-                  w='80'
-                >
-                  <Box d='flex' alignItems='center' justifyContent='space-between'>
-                    <Text fontWeight='bold'>Response: </Text>
-                    <Text>{response}</Text>
-                  </Box>
-                  <Box d='flex' alignItems='center' justifyContent='space-between'>
-                    <Text fontWeight='bold'>Correct Answer: </Text>
-                    <Text>{currentClue.clue.answer}</Text>
-                  </Box>
-                </Box>
-              </VStack>
-            </Center>
-          )}
-        </Box>
-      )}
-
-      {/* menu overlay */}
-      {menuDisplayToggle && (
-        <Box bg='blue.400' w='100vw' h='100vh' zIndex='4000' position='absolute' top='0' right='0'>
-          <Box
+      <AnimatePresence>
+        {/* questions response overlay */}
+        {responseDisplayToggle && currentClue && (
+          <MotionBox
+            variants={ResponseVariants}
+            initial='initial'
+            animate='animate'
+            exit='exit'
+            bg={responseCorrect ? 'green.300' : 'red.400'}
+            w='100vw'
+            h='100vh'
+            zIndex='2000'
             position='absolute'
-            top='3'
-            right='3'
-            onClick={() => {
-              console.log('menu toggle')
-              setMenuDisplayToggle(!menuDisplayToggle)
-            }}
+            top='0'
+            right='0'
           >
-            <SettingsIcon fontSize={22} mx='2' />
-          </Box>
-          <Box
-            d='flex'
-            alignItems='center'
-            justifyContent='center'
-            textAlign='center'
-            h='100%'
-            w='100%'
+            {responseCorrect ? (
+              <Center w='100%' h='100%'>
+                <VStack fontSize={46} spacing={6}>
+                  <Text fontSize={22} fontWeight='bold'>
+                    {playersTurn ? 'PLAYER' : 'CPU'}
+                  </Text>
+                  <Text>Correct!</Text>
+                  <CheckCircleIcon />
+                  <Text>${currentClue.clue.value}</Text>
+                  <Box
+                    d='flex'
+                    flexDirection='column'
+                    fontSize={16}
+                    border='2px solid black'
+                    borderRadius='md'
+                    p={2}
+                    w='80'
+                  >
+                    <Box d='flex' alignItems='center' justifyContent='space-between'>
+                      <Text fontWeight='bold'>Response: </Text>
+                      <Text>{response}</Text>
+                    </Box>
+                    <Box d='flex' alignItems='center' justifyContent='space-between'>
+                      <Text fontWeight='bold'>Correct Answer: </Text>
+                      <Text>{currentClue?.clue.answer}</Text>
+                    </Box>
+                  </Box>
+                </VStack>
+              </Center>
+            ) : (
+              <Center w='100%' h='100%'>
+                <VStack fontSize={46} spacing={6}>
+                  <Text fontSize={22} fontWeight='bold'>
+                    {playersTurn ? 'PLAYER' : 'CPU'}
+                  </Text>
+                  <Text>Wrong!</Text>
+                  <NotAllowedIcon />
+                  <Box
+                    d='flex'
+                    flexDirection='column'
+                    fontSize={16}
+                    border='2px solid black'
+                    borderRadius='md'
+                    p={2}
+                    w='80'
+                  >
+                    <Box d='flex' alignItems='center' justifyContent='space-between'>
+                      <Text fontWeight='bold'>Response: </Text>
+                      <Text>{response}</Text>
+                    </Box>
+                    <Box d='flex' alignItems='center' justifyContent='space-between'>
+                      <Text fontWeight='bold'>Correct Answer: </Text>
+                      <Text>{currentClue.clue.answer}</Text>
+                    </Box>
+                  </Box>
+                </VStack>
+              </Center>
+            )}
+          </MotionBox>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {/* menu overlay */}
+        {menuDisplayToggle && (
+          <MotionBox
+            variants={MenuVariants}
+            initial='initial'
+            animate='animate'
+            exit='exit'
+            bg='blue.400'
+            w='100vw'
+            h='100vh'
+            zIndex='4000'
+            position='absolute'
+            top='0'
+            right='0'
           >
-            <RouterLink to='/home'>
-              <Text fontFamily='cursive' fontSize={42} maxWidth='60' noOfLines={2}>
-                Leave Game
-              </Text>
-            </RouterLink>
-          </Box>
-        </Box>
-      )}
+            <MotionBox
+              position='absolute'
+              top='3'
+              right='3'
+              onClick={() => {
+                console.log('menu toggle')
+                setMenuDisplayToggle(!menuDisplayToggle)
+              }}
+              whileHover={{ rotate: 90 }}
+            >
+              <SettingsIcon fontSize={22} mx='2' />
+            </MotionBox>
+            <Box
+              d='flex'
+              alignItems='center'
+              justifyContent='center'
+              textAlign='center'
+              h='100%'
+              w='100%'
+            >
+              <RouterLink to='/home'>
+                <MotionText
+                  whileHover={{ scale: 1.1 }}
+                  fontFamily='cursive'
+                  fontSize={42}
+                  maxWidth='60'
+                  noOfLines={2}
+                >
+                  Leave Game
+                </MotionText>
+              </RouterLink>
+            </Box>
+          </MotionBox>
+        )}
+      </AnimatePresence>
     </MotionContainer>
   )
 }
