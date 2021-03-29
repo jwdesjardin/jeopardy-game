@@ -145,6 +145,8 @@ export const GamePage: React.FC<GamePageProps> = ({ history }) => {
 
   // user picks a question
   const clickQuestionHandler = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    if (!playersTurn) return
+
     // read event and find coordinates of clue
     const element = event.currentTarget as HTMLInputElement
     if (element.getAttribute('disabled') === 'true') return
